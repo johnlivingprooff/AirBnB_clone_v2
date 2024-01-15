@@ -29,7 +29,7 @@ class TestHBNBCommand_prompt(unittest.TestCase):
             self.assertEqual(hbnb_command.prompt, '(hbnb) ')
 
     def test_prompt_non_interactive_mode(self):
-        """Simulate non-interactive mode (input is not coming from a terminal)"""
+        """Simulate non-interactive mode"""
         with patch.object(sys.stdin, 'isatty', return_value=False):
             hbnb_command = HBNBCommand()
             self.assertNotEqual(hbnb_command.prompt, '')
@@ -129,6 +129,7 @@ class TestHBNBCommand_exit(unittest.TestCase):
 
         # Ensure that there is a newline printed to stdout
         self.assertEqual(mock_stdout.getvalue(), '\n')
+
 
 class TestHBNBCommand_create(unittest.TestCase):
     """Unittests for testing create from the HBNB command interpreter."""
@@ -859,7 +860,7 @@ class TestHBNBCommand_all(unittest.TestCase):
             self.assertIn("Review", output.getvalue().strip())
             self.assertNotIn("BaseModel", output.getvalue().strip())
 
-        
+
 class TestHBNBCommand_update(unittest.TestCase):
     """Unittests for testing update from the HBNB command interpreter."""
 
@@ -984,14 +985,18 @@ class TestHBNBCommand_update(unittest.TestCase):
     def test_update_and_verify_persistence_to_file(self):
         HBNBCommand().onecmd("create BaseModel")
         with patch("sys.stdout", new=StringIO()) as output:
-            self.assertFalse(HBNBCommand().onecmd("update BaseModel 1 name John age 25"))
-            self.assertEqual(output.getvalue().strip(), '** no instance found **')
-    
+            cr_out = "** no instance found **"
+            self.assertFalse(HBNBCommand().onecmd("update BaseModel 1 \
+                                                  name John age 25"))
+            self.assertEqual(output.getvalue().strip(), cr_out)
+
     def test_update_invalid_syntax_extra_parameters(self):
         HBNBCommand().onecmd("create BaseModel")
         with patch("sys.stdout", new=StringIO()) as output:
-            self.assertFalse(HBNBCommand().onecmd("update BaseModel 1 name John age 25 extra_param"))
-            self.assertEqual(output.getvalue().strip(), "** no instance found **")
+            cr_out = "** no instance found **"
+            self.assertFalse(HBNBCommand().onecmd("update BaseModel 1 name \
+                                                  John age 25 extra_param"))
+            self.assertEqual(output.getvalue().strip(), cr_out)
 
 
 class TestHBNBCommand_count(unittest.TestCase):

@@ -2,6 +2,7 @@
 """Test Module for file storage"""
 import unittest
 import os
+import pep8
 from models.base_model import BaseModel
 from models.user import User
 from models.place import Place
@@ -10,6 +11,26 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 from models.engine.file_storage import FileStorage
+
+
+class TestAmenity_pep8(unittest.TestCase):
+    """Unittest for Amenity class docs and style"""
+
+    def test_docstring(self):
+        """checks for docstrings"""
+        self.assertTrue(hasattr(FileStorage, "__init__"))
+        self.assertTrue(hasattr(FileStorage, "all"))
+        self.assertTrue(hasattr(FileStorage, "new"))
+        self.assertTrue(hasattr(FileStorage, "save"))
+        self.assertTrue(hasattr(FileStorage, "delete"))
+        self.assertTrue(hasattr(FileStorage, "reload"))
+
+    def test_pep8(self):
+        """Checks PEP8 compliance"""
+        msg = "PEP8 incompliant, errors found"
+        style = pep8.StyleGuide()
+        res = style.check_files(["models/engine/file_storage.py"])
+        self.assertEqual(res.total_errors, 0, msg)
 
 
 class TestFileStorage(unittest.TestCase):

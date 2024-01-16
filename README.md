@@ -29,7 +29,7 @@ To use the command interpreter, simply type in any of these commands: ```create`
 First clone the repository to you local device:
 
 ```bash
-$git clone https://github.com/AjwadG/AirBnB_clone_v2/.git
+$git clone https://github.com/AjwadG/AirBnB_clone_v2.git
 
 ```
 

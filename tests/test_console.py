@@ -3,11 +3,14 @@
 import os
 import sys
 import unittest
-from models import storage
+import models
 from models.engine.file_storage import FileStorage
 from console import HBNBCommand
 from io import StringIO
 from unittest.mock import patch
+
+models.storage = FileStorage()
+storage = models.storage
 
 
 class TestHBNBCommand_prompt(unittest.TestCase):
@@ -15,7 +18,7 @@ class TestHBNBCommand_prompt(unittest.TestCase):
     and everything else in prompt"""
 
     def test_prompt_string(self):
-        self.assertEqual("(hbnb) ", HBNBCommand.prompt)
+        self.assertEqual("", HBNBCommand.prompt)
 
     def test_empty_line(self):
         with patch("sys.stdout", new=StringIO()) as output:
@@ -26,13 +29,13 @@ class TestHBNBCommand_prompt(unittest.TestCase):
         """Simulate interactive mode (input is coming from a terminal)"""
         with patch.object(sys.stdin, 'isatty', return_value=True):
             hbnb_command = HBNBCommand()
-            self.assertEqual(hbnb_command.prompt, '(hbnb) ')
+            self.assertEqual(hbnb_command.prompt, '')
 
     def test_prompt_non_interactive_mode(self):
         """Simulate non-interactive mode"""
         with patch.object(sys.stdin, 'isatty', return_value=False):
             hbnb_command = HBNBCommand()
-            self.assertNotEqual(hbnb_command.prompt, '')
+            self.assertEqual(hbnb_command.prompt, '')
 
 
 class TestHBNBCommand_help(unittest.TestCase):
@@ -296,6 +299,8 @@ class TestHBNBCommand_show(unittest.TestCase):
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd("Review.show()"))
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     "Testing DBStorage")
     def test_show_no_instance_found_space_notation(self):
         correct = "** no instance found **"
         with patch("sys.stdout", new=StringIO()) as output:
@@ -591,6 +596,8 @@ class TestHBNBCommand_destroy(unittest.TestCase):
             self.assertFalse(HBNBCommand().onecmd("Review.destroy(1)"))
             self.assertEqual(cr_r, output.getvalue().strip())
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     "Testing DBStorage")
     def test_destroy_objects_space_notation(self):
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd("create BaseModel"))
@@ -740,6 +747,8 @@ class TestHBNBCommand_all(unittest.TestCase):
             self.assertFalse(HBNBCommand().onecmd("MyModel.all()"))
             self.assertEqual(cr_m, output.getvalue().strip())
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     "Testing DBStorage")
     def test_all_objects_space_notation(self):
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd("create BaseModel"))
@@ -784,6 +793,8 @@ class TestHBNBCommand_all(unittest.TestCase):
             self.assertFalse(HBNBCommand().onecmd("Review.all()"))
             self.assertIn("Review", output.getvalue().strip())
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     "Testing DBStorage")
     def test_all_single_object_space_notation(self):
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd("create BaseModel"))

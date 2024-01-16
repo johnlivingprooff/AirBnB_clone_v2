@@ -1,113 +1,196 @@
 #!/usr/bin/python3
-"""Test Module for database storage"""
+"""Defines unnittests for models/engine/db_storage.py."""
+import pep8
+import models
+import MySQLdb
 import unittest
-from models.amenity import Amenity
-from models.base_model import BaseModel
+from os import getenv
+from models.base_model import Base
+from models.user import User
+from models.state import State
 from models.city import City
+from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.state import State
-from sqlalchemy.ext.declarative import declarative_base
-from models.user import User
-from models import storage
-from os import getenv
+from models.engine.db_storage import DBStorage
+from models.engine.file_storage import FileStorage
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
+from sqlalchemy.orm.session import Session
+from sqlalchemy.engine.base import Engine
+import sqlalchemy.orm.scoping as tmps
 
 
-Base = declarative_base()
+class TestDBStorage_pep8(unittest.TestCase):
+    """Unittest for State class docs and style"""
+
+    def test_docstring(self):
+        """checks for docstrings"""
+        self.assertIsNotNone(DBStorage.__doc__)
+        self.assertIsNotNone(DBStorage.__init__.__doc__)
+        self.assertIsNotNone(DBStorage.all.__doc__)
+        self.assertIsNotNone(DBStorage.new.__doc__)
+        self.assertIsNotNone(DBStorage.save.__doc__)
+        self.assertIsNotNone(DBStorage.delete.__doc__)
+        self.assertIsNotNone(DBStorage.reload.__doc__)
+
+    def test_pep8(self):
+        """Checks PEP8 compliance"""
+        msg = "PEP8 incompliant, errors found"
+        style = pep8.StyleGuide()
+        res = style.check_files(["models/engine/db_storage.py"])
+        self.assertEqual(res.total_errors, 0, msg)
 
 
 class TestDBStorage(unittest.TestCase):
+    """Unittests for testing the DBStorage class."""
 
     @classmethod
     def setUpClass(cls):
-        # Set up the database connection and create tables
-        USER = getenv('HBNB_MYSQL_USER')
-        PWD = getenv('HBNB_MYSQL_PWD')
-        HOST = getenv('HBNB_MYSQL_HOST')
-        DB = getenv('HBNB_MYSQL_DB')
-        cls.engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
-                                   format(USER, PWD, HOST, DB),
-                                   pool_pre_ping=True)
-        Base.metadata.create_all(cls.engine)
-        Session = sessionmaker(bind=cls.engine)
-        cls.session = Session()
+        """DBStorage testing setup.
+
+        Instantiate new DBStorage.
+        Fill DBStorage test session with instances of all classes.
+        """
+        if type(models.storage) == DBStorage:
+            cls.storage = DBStorage()
+            Base.metadata.create_all(cls.storage._DBStorage__engine)
+            Session = sessionmaker(bind=cls.storage._DBStorage__engine)
+            cls.storage._DBStorage__session = Session()
+            cls.state = State(name="California")
+            cls.storage._DBStorage__session.add(cls.state)
+            cls.city = City(name="San_Jose", state_id=cls.state.id)
+            cls.storage._DBStorage__session.add(cls.city)
+            cls.user = User(email="poppy@holberton.com", password="betty")
+            cls.storage._DBStorage__session.add(cls.user)
+            cls.place = Place(city_id=cls.city.id, user_id=cls.user.id,
+                              name="School")
+            cls.storage._DBStorage__session.add(cls.place)
+            cls.amenity = Amenity(name="Wifi")
+            cls.storage._DBStorage__session.add(cls.amenity)
+            cls.review = Review(place_id=cls.place.id, user_id=cls.user.id,
+                                text="stellar")
+            cls.storage._DBStorage__session.add(cls.review)
+            cls.storage._DBStorage__session.commit()
 
     @classmethod
     def tearDownClass(cls):
-        # Close the database connection and rollback the transaction
-        cls.trans.rollback()
-        cls.connection.close()
+        """DBStorage testing teardown.
 
-    def setUp(self):
-        # Create an instance of DBStorage for each test
-        self.db_storage = storage.DBStorage()
-        self.session = self.db_storage._DBStorage__session
+        Delete all instantiated test classes.
+        Clear DBStorage session.
+        """
+        if type(models.storage) == DBStorage:
+            cls.storage._DBStorage__session.delete(cls.state)
+            cls.storage._DBStorage__session.delete(cls.city)
+            cls.storage._DBStorage__session.delete(cls.user)
+            cls.storage._DBStorage__session.delete(cls.amenity)
+            cls.storage._DBStorage__session.commit()
+            del cls.state
+            del cls.city
+            del cls.user
+            del cls.place
+            del cls.amenity
+            del cls.review
+            cls.storage._DBStorage__session.close()
+            del cls.storage
 
-    def tearDown(self):
-        # Clear the database session after each test
-        self.session.close()
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "Testing DBStorage")
+    def test_attributes(self):
+        """Check for attributes."""
+        self.assertTrue(isinstance(self.storage._DBStorage__engine, Engine))
+        self.assertTrue(isinstance(self.storage._DBStorage__session, Session))
 
-    def test_all_method_returns_dict(self):
-        # Check if all method returns a dictionary
-        result = self.db_storage.all()
-        self.assertIsInstance(result, dict)
+    def test_methods(self):
+        """Check for methods."""
+        self.assertTrue(hasattr(DBStorage, "__init__"))
+        self.assertTrue(hasattr(DBStorage, "all"))
+        self.assertTrue(hasattr(DBStorage, "new"))
+        self.assertTrue(hasattr(DBStorage, "save"))
+        self.assertTrue(hasattr(DBStorage, "delete"))
+        self.assertTrue(hasattr(DBStorage, "reload"))
 
-    def test_all_method_returns_filtered_dict(self):
-        amenity = Amenity(name="Pool")
-        city = City(name="City Test")
-        self.db_storage.new(amenity)
-        self.db_storage.new(city)
-        self.db_storage.save()
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "Testing DBStorage")
+    def test_init(self):
+        """Test initialization."""
+        self.assertTrue(isinstance(self.storage, DBStorage))
 
-        result = self.db_storage.all(City)
-        self.assertIn("City.{}".format(city.id), result)
-        self.assertNotIn("Amenity.{}".format(amenity.id), result)
+    @unittest.skipIf(type(models.storage) == FileStorage,
+                     "Testing FileStorage")
+    def test_all(self):
+        """Test default all method."""
+        obj = self.storage.all()
+        self.assertEqual(type(obj), dict)
+        self.assertEqual(len(obj), 6)
 
-    def test_new_object_added_to_session(self):
-        # Check if the new method adds the object to the current session
-        base_model = BaseModel()
-        self.db_storage.new(base_model)
-        self.assertIn(base_model, self.session.new)
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "Testing DBStorage")
+    def test_all_cls(self):
+        """Test all method with specified cls."""
+        obj = self.storage.all("State")
+        self.assertEqual(type(obj), dict)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(self.state, list(obj.values())[0])
 
-    def test_save_method_commits_to_db(self):
-        # Check if the save method commits changes to the database
-        base_model = BaseModel()
-        self.db_storage.new(base_model)
-        self.db_storage.save()
+    @unittest.skipIf(type(models.storage) == FileStorage,
+                     "Testing FileStorage")
+    def test_new(self):
+        """Test new method."""
+        st = State(name="Washington")
+        self.storage.new(st)
+        store = list(self.storage._DBStorage__session.new)
+        self.assertIn(st, store)
 
-        with self.engine.connect() as connection:
-            result = connection.execute("SELECT * FROM BaseModel;")
-            self.assertIsNotNone(result.fetchone())
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "Testing DBStorage")
+    def test_save(self):
+        """Test save method."""
+        st = State(name="Virginia")
+        self.storage._DBStorage__session.add(st)
+        self.storage.save()
+        db = MySQLdb.connect(user="hbnb_test",
+                             passwd="hbnb_test_pwd",
+                             db="hbnb_test_db")
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM states WHERE BINARY name = 'Virginia'")
+        query = cursor.fetchall()
+        self.assertEqual(1, len(query))
+        print(query)
+        self.assertEqual(st.id, query[0][1])
+        cursor.close()
 
-    def test_delete_method_removes_object_from_session(self):
-        base_model = BaseModel()
-        self.db_storage.new(base_model)
-        self.db_storage.delete(base_model)
-        self.assertNotIn(base_model, self.session.new)
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "Testing DBStorage")
+    def test_delete(self):
+        """Test delete method."""
+        st = State(name="New_York")
+        self.storage._DBStorage__session.add(st)
+        self.storage._DBStorage__session.commit()
+        self.storage.delete(st)
+        self.assertIn(st, list(self.storage._DBStorage__session.deleted))
 
-    def test_reload_method_creates_tables(self):
-        # Check if the reload method creates tables in the database
-        self.db_storage.reload()
-        with self.engine.connect() as connection:
-            tables = connection.execute("SHOW TABLES;")
-            tables = [table[0] for table in tables]
-            self.assertIn('BaseModel', tables)
-            self.assertIn('User', tables)
-            # Add other model tables as needed
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "Testing DBStorage")
+    def test_delete_none(self):
+        """Test delete method with None."""
+        try:
+            self.storage.delete(None)
+        except Exception:
+            self.fail
 
-    def test_reload_method_populates_session(self):
-        user = User(username="test_user")
-        self.db_storage.new(user)
-        self.db_storage.save()
+    @unittest.skipIf(type(models.storage) == FileStorage,
+                     "Testing FileStorage")
+    def test_reload(self):
+        """Test reload method."""
+        og_session = self.storage._DBStorage__session
+        self.storage.reload()
+        tmp = tmps.scoped_session
+        self.assertEqual(tmp, type(self.storage._DBStorage__session))
+        self.assertNotEqual(og_session, self.storage._DBStorage__session)
+        self.storage._DBStorage__session.close()
+        self.storage._DBStorage__session = og_session
 
-        new_db_storage = storage.DBStorage()
-        new_db_storage.reload()
 
-        result = new_db_storage.all()
-        self.assertIn("User.{}".format(user.id), result)
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

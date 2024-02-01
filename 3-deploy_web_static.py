@@ -1,10 +1,8 @@
 #!/usr/bin/python3
-"""combines do_pack() with do_deply()"""
+"""deploys web servers"""
 from fabric.api import *
 from datetime import datetime
 import os
-
-
 env.hosts = ['100.25.162.17', '100.25.131.228']
 env.user = "ubuntu"
 
@@ -43,3 +41,14 @@ def do_deploy(archive_path):
         return True
 
     return False
+
+
+def deploy():
+    """creates and distributes an archive to your web servers"""
+
+    arch_path = do_pack()
+    if arch_path:
+        val = do_deploy(arch_path)
+        return val
+    else:
+        return False

@@ -12,23 +12,35 @@ def do_deploy(archive_path):
     if not os.path.exists(archive_path):
         return False
 
-    try:
-        put(archive_path, '/tmp/')
-        archive_name = archive_path.split('/')[-1]
-        dirN = archive_name.split('.')[0]
-        release_path = '/data/web_static/releases/'
 
-        run(f'sudo mkdir -p {release_path}{dirN}')
-        run(f'sudo tar -xzf /tmp/{archive_name} -C {release_path}{dirN}/')
-        run(f'sudo rm /tmp/{archive_name}')
-        run(f'sudo mv {release_path}{dirN}/web_static/* {release_path}{dirN}/')
-        run(f'sudo rm -rf {release_path}{dirN}/web_static')
-        run('sudo rm -rf /data/web_static/current')
-        run(f'sudo ln -s {release_path}{dirN}/ /data/web_static/current')
-
-        print('New version deployed!')
-        return True
-
-    except Exception as e:
-        print(e)
+    b = put(archive_path, '/tmp/')
+    if b.failed:
         return False
+    archive_name = os.path.basename(archive_path)
+    dirN = os.path.splitext(archive_name)[0]
+    release_path = f'/data/web_static/releases/{dirN}'
+
+    b = run(f'mkdir -p {release_path}{dirN}')
+    if b.failed:
+        return False
+    b = run(f'tar -xzf /tmp/{archive_name} -C {release_path}/')
+    if b.failed:
+        return False
+    b = run(f'rm /tmp/{archive_name}')
+    if b.failed:
+        return False
+    b = run(f'mv {release_path}/web_static/* {release_path}/')
+    if b.failed:
+        return False
+    b = run(f'rm -rf {release_path}/web_static')
+    if b.failed:
+        return False
+    b = run('rm -rf /data/web_static/current')
+    if b.failed:
+        return False
+    b = run(f'ln -s {release_path}/ /data/web_static/current')
+    if b.failed:
+        return False
+
+    print('New version deployed!')
+    return True

@@ -26,7 +26,10 @@ def do_pack():
 def do_deploy(archive_path):
     """Distributes an archive to your web servers"""
 
-    if os.path.exists(archive_path):
+    if not os.path.exists(archive_path):
+        return False
+
+    try:
         put(archive_path, '/tmp/')
         archive_name = archive_path.split('/')[-1]
         dirN = archive_name.split('.')[0]
@@ -42,4 +45,6 @@ def do_deploy(archive_path):
         print('New version deployed!')
         return True
 
-    return False
+    except Exception as e:
+        print(e)
+        return False

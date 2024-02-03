@@ -35,7 +35,7 @@ def do_deploy(archive_path):
         dirN = os.path.splitext(archive_name)[0]
         release_path = f'/data/web_static/releases/{dirN}'
 
-        err = run(f'mkdir -p {release_path}{dirN}')
+        err = run(f'mkdir -p {release_path}')
         if err.failed:
             return False
         err = run(f'tar -xzf /tmp/{archive_name} -C {release_path}/')

@@ -56,11 +56,12 @@ def number_temp(n):
 def number_odd_or_even(n):
     """ Renders an HTML file only if n is an integer """
     if n % 2 == 0:
-        odd_even = "even"
+        odd_or = "even"
     else:
-        odd_even = "odd"
+        odd_or = "odd"
 
-    return render_template('6-number_odd_or_even.html', number=n, odd_even=odd_even)
+    return render_template('6-number_odd_or_even.html',
+                           number=n, odd_even=odd_or)
 
 
 if __name__ == '__main__':

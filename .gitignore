@@ -16,3 +16,4 @@ test.py
 tester.py
 .env
 dump.sql
+venv/

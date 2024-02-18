@@ -11,7 +11,6 @@
 }
 
 
-
 article {
     width: 390px;
     padding: 20px;
@@ -101,5 +100,72 @@ article {
 
 .description {
     padding-top: 15px;
-    margin-bottom: 10px;
+}
+
+.amenities-two {
+    margin-top: 40px;
+    position: relative;
+    width: 100%;
+    h2 {
+        border-bottom: #dddddd 1px solid;
+        text-align: left;
+        font-size: 16px;
+    }
+
+    ul li {
+        list-style-type: none;
+        margin-left: -45px;
+        padding-left: 45px;
+        margin-top: 10px;
+
+    }
+}
+
+.pet_icon {
+    background-image: url(../images/icon_pets.png);
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: 30px;
+    padding-top: 5px;
+}
+
+.tv_icon {
+    background-image: url(../images/icon_tv.png);
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: 30px;
+    padding-top: 5px;
+}
+
+.wifi {
+    background-image: url(../images/icon_wifi.png);
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: 30px;
+    padding-top: 5px;
+}
+
+.reviews {
+    margin-top: 40px;
+    position: relative;
+    width: 100%;
+    h2 {
+        border-bottom: #dddddd 1px solid;
+        text-align: left;
+        font-size: 16px;
+    }
+
+    ul li {
+        list-style-type: none;
+        padding-bottom: 0;
+        margin-left: -40px;
+        h3 {
+            font-size: 14;
+            margin-bottom: 0;
+        }
+        p {
+            font-size: 12px;
+            margin-top: 0;
+        }
+    }
 }

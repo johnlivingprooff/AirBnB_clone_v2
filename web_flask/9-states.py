@@ -14,22 +14,20 @@ def teardown(exception):
     storage.close()
 
 
-@app.route('/states', strict_slashes=False)
-def states():
-    """ displays a list of the cities by states """
-    states = storage.all(State).values()
-    sorted_states = sorted(states, key=lambda x: x.name)
-
-    return render_template('9-states.html', states=sorted_states)
-
-
+@app.route('/states', strict_slashes=False, defaults={'id': None})
 @app.route('/states/<id>', strict_slashes=False)
 def state_cities(id):
     """ displace the cities of a state id """
-    state = storage.all(State).get(f"State.{id}")
-    sorted_state = sorted(state, key=lambda x: x.name)
+    states = storage.all(State).values()
+    sorted_states = sorted(states, key=lambda x: x.name)
+    if id is None:
+        return render_template('7-states_list.html', states=sorted_states)
+    
+    for state in sorted_states:
+        if state.id == id:
+            return render_template('9-states.html', state=state)
 
-    return render_template('9-states.html', state=sorted_state)
+    return render_template('9-states.html', state=None)
 
 
 if __name__ == '__main__':

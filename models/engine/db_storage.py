@@ -28,8 +28,9 @@ class DBStorage:
         PWD = getenv('HBNB_MYSQL_PWD')
         HOST = getenv('HBNB_MYSQL_HOST')
         DB = getenv('HBNB_MYSQL_DB')
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
-                                      format(USER, PWD, HOST, DB),
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}{}'.
+                                      format(USER, PWD, HOST, DB,
+                                             "?charset=latin1"),
                                       pool_pre_ping=True)
 
         if getenv('HBNB_ENV') == "test":
@@ -39,7 +40,8 @@ class DBStorage:
         ''' query on the current database session '''
         objs = {}
         if cls is not None:
-            for obj in self.__session.query(models[cls]):
+            cls = cls if type(cls) != str else models[cls]
+            for obj in self.__session.query(cls):
                 objs[obj.__class__.__name__ + '.' + obj.id] = obj
         else:
             for model in models:
@@ -60,13 +62,12 @@ class DBStorage:
         if obj is not None:
             self.__session.delete(obj)
 
+    def close(self):
+        """ removes the session """
+        self.__session.close()
+
     def reload(self):
         ''' create all tables in the database '''
         Base.metadata.create_all(self.__engine)
         session = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(session)
-
-    def close(self):
-        """ calls remove() """
-
-        self.__session.close()

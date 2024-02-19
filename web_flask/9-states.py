@@ -22,7 +22,7 @@ def state_cities(id):
     sorted_states = sorted(states, key=lambda x: x.name)
     if id is None:
         return render_template('7-states_list.html', states=sorted_states)
-    
+
     for state in sorted_states:
         if state.id == id:
             return render_template('9-states.html', state=state)

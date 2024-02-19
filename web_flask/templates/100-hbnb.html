@@ -1,68 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>AirBnB Clone</title>
+	<head>
+		<meta charset="utf-8">
+		<title>AirBnB clone</title>
+
         <link rel="shortcut icon" href="../static/images/icon.ico" type="image/ico">
         <link rel="stylesheet" href="../static/styles/4-common.css">
         <link rel="stylesheet" href="../static/styles/3-header.css">
         <link rel="stylesheet" href="../static/styles/6-filters.css">
         <link rel="stylesheet" href="../static/styles/3-footer.css">
         <link rel="stylesheet" href="../static/styles/8-places.css">
-    </head>
-    <body>
-        <header>
-            <div class="logo"></div>
-        </header>
-        <div class="container">
-            <section class="filters">
-                <div class="locations">
-                    <h3>States</h3>
-					<h4>&nbsp;</h4>
-					<ul class="popover">
-                    {% for state in states|sort(attribute='name') %}    
-						<li><h2>{{ state.name }}</h2>
-							<ul>
-                            {% for city in state.cities|sort(attribute='name') %}    
-								<li><h4>{{ city.name }}</h4></li>
-                            {% endfor %}
-							</ul>
-                        </li>
-                    {% endfor %}
-					</ul>
-                </div>
-                <div class="amenities">
-                    <h3>Amenities</h3>
-					<h4>&nbsp;</h4>
-					<ul class="popover">
-                    {% for amenity in amenities|sort(attribute='name') %}
-                        <li>{{ amenity.name }}</li>
-                    {% endfor %}
-					</ul>
-                </div>
-                <button>Search</button>
-            </section>
-            <section class="places">
-                <h1>Places</h1>
-                {% for place in places|sort(attribute='name') %}
-                <article>
-                    <h2>{{ place.name }}</h2>
-                    <div class="price_by_night">{{ place.price_by_night }}</div>
-                    <div class="information">
-                        <div class="max_guest">{{ place.max_guest }} Guests</div>
-                        <div class="number_rooms">{{ place.number_rooms }} Bedroom(s)</div>
-                        <div class="number_bathrooms">{{ place.number_bathrooms }} bathroom(s)</div>
-                    </div>
-                    <div class="user"><b>Owner:</b> {{ place.owner }}</div>
-                    <div class="description">
-                        <p>{{ place.description|safe }}</p>
-                    </div>
-                </article>
-                {% endfor %}
-            </section>
-        </div>
-        <footer>
-            Best School
-        </footer>
-    </body>
+	</head>
+	<body>
+		<header>
+            <div id="header_logo"></div>
+		</header>
+		<div class="container">
+			<section class="filters">
+				<button>Search</button>
 
+				<div class="amenities">
+					<h3>Amenities</h3>
+					<h4>&nbsp;</h4>
+					<ul class="popover">
+					{% for amenity in amenities|sort(attribute='name', case_sensitive=True) %}
+						<li>{{ amenity.name }}</li>
+					{% endfor %}
+					</ul>
+				</div>
+
+				<div class="locations">
+					<h3>States</h3>
+					<h4>&nbsp;</h4>
+					<ul class="popover">
+					{% for state in states|sort(attribute='name', case_sensitive=True) %}
+						<LI>
+							<h2>{{ state.name }}</h2>
+ 							<UL>
+							{% for city in state.cities|sort(attribute='name') %}
+								<LI>{{ city.name }}<LI>
+							{% endfor %}
+							</UL>
+						</LI>
+					{% endfor %}
+					</ul>
+				</div>
+
+			</section>
+			<section class="places">
+				<h1>Places</h1>
+				<div class="places-list">
+					{% for place in places|sort(attribute='name', case_sensitive=True) %}
+					<article> 
+						<h2>{{place.name}}</h2>
+						<div class="price_by_night">${{ place.price_by_night }}</div>
+						<div class="information">
+							<div class="max_guest">{{ place.max_guest }} Guests</div>
+							<div class="number_rooms">{{ place.number_rooms }} Bedroom</div>
+							<div class="number_bathrooms">{{ place.number_bathrooms }} Bathroom</div>
+						</div>
+						<div class="user">
+							<p><span>Owner:</span> {{ place.owner }}</p>
+						</div>
+						<div class="description">
+							<p>{{ place.description|safe }}</p>
+						</div>
+					</article>
+					{% endfor %}
+				</div>
+			</section>
+		</div>
+		<footer>
+			<span>Holberton School</span>
+		</footer>
+	</body>
 </html>

@@ -1,171 +1,69 @@
-/* places */
-.places {
-    display: flex;
-    justify-content: center;
-    flex-flow: row wrap;
-    h1 {
-        font-size: 30px;
-        text-align: left;
-        width: 100%;
-    }
+.places h1 {
+	font-size: 30px
 }
-
-
-article {
-    width: 390px;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 4px;
-    border: 1px #FF5A5F solid;
-    display: inline-table;
-    position: relative;
-
-    h2 {
-        font-size: 30px;
-        text-align: center;
-        margin: 0;
-    }
+.places-list {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
 }
+.places-list article {
+	width: 390px;
+	padding: 20px;
+	margin: 20px;
+	position: relative;
+	border: 1px solid #FF5A5F;
+	border-radius: 4px
+}
+.places-list article h2 {
+	font-size: 30px;
+	margin: 0;
+	position: absolute;
+	width: 73%;
+    overflow: hidden;
+    height: 70px;
 
+}
 .price_by_night {
-    color: #FF5A5F;
-    border: 4px #FF5A5F solid;
-    display: flex;
-    justify-content: center;
-    border-radius: 100%;
-    min-width: 60px;
-    height: 60px;
-    font-size: 30px;
-    text-align: center;
-    line-height: 60px;
-    float: right;
-    padding: 10px;
-    top: 0;
-    position: absolute;
-    right: 0;
-    margin-right: 15px;
-    margin-top: 15px;
+	color: #FF5A5F;
+	border: 4px solid #FF5A5F;
+	border-radius: 100%;
+	min-width: 60px;
+	height: 60px;
+	margin-bottom: 10px;
+	font-size: 30px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	float: right;
 }
-
 .information {
-    margin-top: 60px;
-    height: 80px;
-    border-top: #dddddd solid 1px;
-    border-bottom: #dddddd solid 1px;
-    display: flex;
-    justify-content: center;
+	clear: right;
+	border-top: 1px solid #DDDDDD;
+	border-bottom: 1px solid #DDDDDD;
+	padding: 5px 0;
+	display: flex;
+	justify-content: center
 }
-
+.information div {
+	background-repeat: no-repeat;
+	background-size: auto;
+	background-position: center 0px;
+	width: 100px;
+	height: 65px;
+	display: flex;
+	align-items: end;
+	justify-content: center;
+}
 .max_guest {
-    width: 100px;
-    background-image: url(../images/icon_group.png);
-    background-repeat: no-repeat;
-    background-position: top;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 0;
-    display: inline-block;
-    padding-top: 45px;
-    margin-right: 20px;
+	background-image: url("../images/icon_group.png");
 }
-
 .number_rooms {
-    width: 100px;
-    background-image: url(../images/icon_bed.png);
-    background-repeat: no-repeat;
-    background-position: top;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 0;
-    display: inline-block;
-    padding-top: 45px;
-    margin-right: 20px;
+	background-image: url("../images/icon_bed.png");
 }
-
 .number_bathrooms {
-    width: 100px;
-    background-image: url(../images/icon_bath.png);
-    background-repeat: no-repeat;
-    background-position: top;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 0;
-    display: inline-block;
-    padding-top: 45px;
+	background-image: url("../images/icon_bath.png");
 }
 
-.user {
-    margin-top: 25px;
-}
-
-.description {
-    padding-top: 15px;
-}
-
-.amenities-two {
-    margin-top: 40px;
-    position: relative;
-    width: 100%;
-    h2 {
-        border-bottom: #dddddd 1px solid;
-        text-align: left;
-        font-size: 16px;
-    }
-
-    ul li {
-        list-style-type: none;
-        margin-left: -45px;
-        padding-left: 45px;
-        margin-top: 10px;
-
-    }
-}
-
-.pet_icon {
-    background-image: url(../images/icon_pets.png);
-    background-repeat: no-repeat;
-    background-position: left;
-    background-size: 30px;
-    padding-top: 5px;
-}
-
-.tv_icon {
-    background-image: url(../images/icon_tv.png);
-    background-repeat: no-repeat;
-    background-position: left;
-    background-size: 30px;
-    padding-top: 5px;
-}
-
-.wifi {
-    background-image: url(../images/icon_wifi.png);
-    background-repeat: no-repeat;
-    background-position: left;
-    background-size: 30px;
-    padding-top: 5px;
-}
-
-.reviews {
-    margin-top: 40px;
-    position: relative;
-    width: 100%;
-    h2 {
-        border-bottom: #dddddd 1px solid;
-        text-align: left;
-        font-size: 16px;
-    }
-
-    ul li {
-        list-style-type: none;
-        padding-bottom: 0;
-        margin-left: -40px;
-        h3 {
-            font-size: 14;
-            margin-bottom: 0;
-        }
-        p {
-            font-size: 12px;
-            margin-top: 0;
-        }
-    }
+.user span {
+	font-weight: bold;
 }

@@ -18,9 +18,8 @@ def teardown(exception):
 def cities_by_states():
     """ displays a list of the cities by states """
     states = storage.all(State).values()
-    sorted_states = sorted(states, key=lambda x: x.name)
 
-    return render_template('8-cities_by_states.html', states=sorted_states)
+    return render_template('8-cities_by_states.html', states=states)
 
 
 if __name__ == '__main__':
